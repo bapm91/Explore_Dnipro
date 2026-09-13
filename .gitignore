@@ -1,45 +1,108 @@
-# Miscellaneous
+# =========================
+# Miscellaneous / OS
+# =========================
 *.class
 *.log
 *.pyc
 *.swp
+
 .DS_Store
 .atom/
-.build/
-.buildlog/
-.history
+.history/
 .svn/
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# =========================
+# IDEs
+# =========================
 *.iml
 *.ipr
 *.iws
+
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
+# VS Code
+# Uncomment if you do not want to commit local VS Code settings
 #.vscode/
 
-# Flutter/Dart/Pub related
+# =========================
+# Flutter / Dart / Pub
+# =========================
+.dart_tool/
+.pub/
+.pub-cache/
+build/
+coverage/
+
+.flutter-plugins
+.flutter-plugins-dependencies
+
 **/doc/api/
 **/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-/coverage/
 
-# Symbolication related
+# Generated Flutter files
+**/Flutter/ephemeral/
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+
+# =========================
+# FVM
+# =========================
+.fvm/
+
+# Keep project FVM config in Git
+!.fvmrc
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+
+# Keep example config in Git
+!.env.example
+
+# =========================
+# Android
+# =========================
+android/.gradle/
+android/local.properties
+android/key.properties
+
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+*.jks
+*.keystore
+
+# =========================
+# iOS / Xcode
+# =========================
+ios/Pods/
+ios/.symlinks/
+
+ios/Runner.xcodeproj/xcuserdata/
+ios/Runner.xcworkspace/xcuserdata/
+
+*.xcuserstate
+
+# =========================
+# Build / Generated
+# =========================
+.build/
+.buildlog/
+
+# Symbolication
 app.*.symbols
 
-# Obfuscation related
+# Obfuscation
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# =========================
+# Certificates / Signing
+# =========================
+*.mobileprovision
+*.p12
+*.cer
