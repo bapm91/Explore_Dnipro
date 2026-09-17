@@ -1,4 +1,6 @@
 import 'package:explore_dnipro/features/explore/presentation/widgets/explore_map_overlay.dart';
+import 'package:explore_dnipro/features/explore/presentation/widgets/place_category_selector.dart';
+import 'package:explore_dnipro/modules/places/domain/entities/place_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -29,6 +31,24 @@ class _ExplorePageState extends State<ExplorePage> {
       minLat: bounds.south,
       maxLon: bounds.east,
       maxLat: bounds.north,
+    );
+  }
+
+  void _selectCategory(PlaceCategory category) {
+    final cubit = context.read<ExploreCubit>();
+
+    if (category == cubit.state.selectedCategory) {
+      return;
+    }
+
+    final bounds = _mapController.camera.visibleBounds;
+
+    context.read<ExploreCubit>().loadPlaces(
+      minLon: bounds.west,
+      minLat: bounds.south,
+      maxLon: bounds.east,
+      maxLat: bounds.north,
+      category: category,
     );
   }
 
@@ -90,6 +110,16 @@ class _ExplorePageState extends State<ExplorePage> {
                     source: Text('OpenStreetMap contributors'),
                   ),
                 ],
+              ),
+              Positioned(
+                top: MediaQuery.paddingOf(context).top + 16,
+                left: 0,
+                right: 0,
+                child: PlaceCategorySelector(
+                  selectedCategory: state.selectedCategory,
+                  enabled: state.status != ExploreStatus.loading,
+                  onSelected: _selectCategory,
+                ),
               ),
               ExploreMapOverlay(
                 status: state.status,
