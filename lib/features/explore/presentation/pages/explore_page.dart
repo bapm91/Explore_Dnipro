@@ -1,5 +1,7 @@
 import 'package:explore_dnipro/features/explore/presentation/widgets/explore_map_overlay.dart';
 import 'package:explore_dnipro/features/explore/presentation/widgets/place_category_selector.dart';
+import 'package:explore_dnipro/features/explore/presentation/widgets/place_details_sheet.dart';
+import 'package:explore_dnipro/modules/places/domain/entities/place.dart';
 import 'package:explore_dnipro/modules/places/domain/entities/place_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,6 +72,17 @@ class _ExplorePageState extends State<ExplorePage> {
     _loadVisiblePlaces();
   }
 
+  void _showPlaceDetails(Place place) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      useSafeArea: true,
+      builder: (_) {
+        return PlaceDetailsSheet(place: place);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,7 +114,10 @@ class _ExplorePageState extends State<ExplorePage> {
                             point: LatLng(place.latitude, place.longitude),
                             width: 40,
                             height: 40,
-                            child: const Icon(Icons.location_on, size: 40),
+                            child: GestureDetector(
+                              onTap: () => _showPlaceDetails(place),
+                              child: const Icon(Icons.location_on, size: 40),
+                            ),
                           ),
                         )
                         .toList(),
