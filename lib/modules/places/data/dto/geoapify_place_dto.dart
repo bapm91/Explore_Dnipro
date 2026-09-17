@@ -16,19 +16,21 @@ class GeoapifyPlaceDto {
   final String? address;
 
   factory GeoapifyPlaceDto.fromJson(Map<String, dynamic> json) {
-    final properties =
-        json['properties'] as Map<String, dynamic>? ?? const {};
+    final properties = json['properties'] as Map<String, dynamic>? ?? const {};
 
-    final geometry =
-        json['geometry'] as Map<String, dynamic>? ?? const {};
+    final rawName = properties['name'];
+
+    final geometry = json['geometry'] as Map<String, dynamic>? ?? const {};
 
     final coordinates = geometry['coordinates'] as List<dynamic>?;
 
     return GeoapifyPlaceDto(
       id: properties['place_id'] as String?,
-      name: properties['name'].toString(),
-      lon: coordinates?.elementAtOrNull(0) as double?,
-      lat: coordinates?.elementAtOrNull(1) as double?,
+      name: rawName is String && rawName.trim().isNotEmpty
+          ? rawName.trim()
+          : null,
+      lon: (coordinates?.elementAtOrNull(0) as num?)?.toDouble(),
+      lat: (coordinates?.elementAtOrNull(1) as num?)?.toDouble(),
       categories: (properties['categories'] as List<dynamic>? ?? const [])
           .whereType<String>()
           .toList(),
