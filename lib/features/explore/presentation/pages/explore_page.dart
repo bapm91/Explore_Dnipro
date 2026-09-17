@@ -14,12 +14,11 @@ class ExplorePage extends StatefulWidget {
 }
 
 class _ExplorePageState extends State<ExplorePage> {
-  static const _dniproCenter = LatLng(
-    48.4647,
-    35.0462,
-  );
+  static const _dniproCenter = LatLng(48.4647, 35.0462);
 
   final MapController _mapController = MapController();
+
+  bool _showSearchThisAreaButton = false;
 
   void _loadVisiblePlaces() {
     final bounds = _mapController.camera.visibleBounds;
@@ -32,45 +31,82 @@ class _ExplorePageState extends State<ExplorePage> {
     );
   }
 
+  void _onPositionChanged(MapCamera camera, bool hasGesture) {
+    if (!hasGesture || _showSearchThisAreaButton) {
+      return;
+    }
+
+    setState(() {
+      _showSearchThisAreaButton = true;
+    });
+  }
+
+  void _searchVisibleArea() {
+    setState(() {
+      _showSearchThisAreaButton = false;
+    });
+
+    _loadVisiblePlaces();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<ExploreCubit, ExploreState>(
         builder: (context, state) {
-          return FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: _dniproCenter,
-              initialZoom: 13,
-              onMapReady: _loadVisiblePlaces,
-            ),
+          final isLoading = state.status == ExploreStatus.loading;
+
+          return Stack(
             children: [
-              TileLayer(
-                urlTemplate:
-                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.example.explore_dnipro',
+              FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: _dniproCenter,
+                  initialZoom: 13,
+                  onMapReady: _loadVisiblePlaces,
+                  onPositionChanged: _onPositionChanged,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.explore_dnipro',
+                  ),
+                  MarkerLayer(
+                    markers: state.places
+                        .map(
+                          (place) => Marker(
+                            point: LatLng(place.latitude, place.longitude),
+                            width: 40,
+                            height: 40,
+                            child: const Icon(Icons.location_on, size: 40),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SimpleAttributionWidget(
+                    source: Text('OpenStreetMap contributors'),
+                  ),
+                ],
               ),
-              MarkerLayer(
-                markers: state.places
-                    .map(
-                      (place) => Marker(
-                        point: LatLng(
-                          place.latitude,
-                          place.longitude,
-                        ),
-                        width: 40,
-                        height: 40,
-                        child: const Icon(
-                          Icons.location_on,
-                          size: 40,
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              const SimpleAttributionWidget(
-                source: Text('OpenStreetMap contributors'),
-              ),
+              if (_showSearchThisAreaButton)
+                Positioned(
+                  bottom: MediaQuery.paddingOf(context).top + 16,
+                  left: 16,
+                  right: 16,
+                  child: Center(
+                    child: FilledButton.icon(
+                      onPressed: isLoading ? null : _searchVisibleArea,
+                      icon: isLoading
+                          ? const SizedBox.square(
+                              dimension: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.search),
+                      label: const Text('Шукати в цій області'),
+                    ),
+                  ),
+                ),
             ],
           );
         },
