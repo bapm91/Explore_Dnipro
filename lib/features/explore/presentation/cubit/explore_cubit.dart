@@ -25,6 +25,11 @@ class ExploreCubit extends Cubit<ExploreState> {
         maxLat: maxLat,
       );
 
+      if (places.isEmpty) {
+        emit(const ExploreState(status: ExploreStatus.empty, places: []));
+        return;
+      }
+
       emit(ExploreState(status: ExploreStatus.success, places: places));
     } catch (_) {
       emit(state.copyWith(status: ExploreStatus.failure));

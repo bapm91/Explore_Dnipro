@@ -5,6 +5,7 @@ enum ExploreStatus {
   initial,
   loading,
   success,
+  empty,
   failure,
 }
 

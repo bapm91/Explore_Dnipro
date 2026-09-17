@@ -18,7 +18,7 @@ class _ExplorePageState extends State<ExplorePage> {
 
   final MapController _mapController = MapController();
 
-  bool _showSearchThisAreaButton = false;
+  bool _hasPendingMapSearch = false;
 
   void _loadVisiblePlaces() {
     final bounds = _mapController.camera.visibleBounds;
@@ -32,18 +32,18 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   void _onPositionChanged(MapCamera camera, bool hasGesture) {
-    if (!hasGesture || _showSearchThisAreaButton) {
+    if (!hasGesture || _hasPendingMapSearch) {
       return;
     }
 
     setState(() {
-      _showSearchThisAreaButton = true;
+      _hasPendingMapSearch = true;
     });
   }
 
   void _searchVisibleArea() {
     setState(() {
-      _showSearchThisAreaButton = false;
+      _hasPendingMapSearch = false;
     });
 
     _loadVisiblePlaces();
@@ -89,7 +89,47 @@ class _ExplorePageState extends State<ExplorePage> {
                   ),
                 ],
               ),
-              if (_showSearchThisAreaButton)
+              if (state.status == ExploreStatus.failure &&
+                  !_hasPendingMapSearch)
+                Positioned(
+                  top: MediaQuery.paddingOf(context).top + 16,
+                  left: 16,
+                  right: 16,
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.error_outline),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Text('Не вдалося завантажити місця'),
+                          ),
+                          TextButton(
+                            onPressed: _loadVisiblePlaces,
+                            child: const Text('Спробувати ще раз'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              if (state.status == ExploreStatus.empty && !_hasPendingMapSearch)
+                const Center(
+                  child: Card(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 14,
+                      ),
+                      child: Text(
+                        'У цій області нічого не знайдено',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              if (_hasPendingMapSearch)
                 Positioned(
                   bottom: MediaQuery.paddingOf(context).top + 16,
                   left: 16,
