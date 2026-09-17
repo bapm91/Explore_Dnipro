@@ -1,3 +1,4 @@
+import 'package:explore_dnipro/features/explore/presentation/widgets/explore_map_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -54,8 +55,6 @@ class _ExplorePageState extends State<ExplorePage> {
     return Scaffold(
       body: BlocBuilder<ExploreCubit, ExploreState>(
         builder: (context, state) {
-          final isLoading = state.status == ExploreStatus.loading;
-
           return Stack(
             children: [
               FlutterMap(
@@ -89,64 +88,13 @@ class _ExplorePageState extends State<ExplorePage> {
                   ),
                 ],
               ),
-              if (state.status == ExploreStatus.failure &&
-                  !_hasPendingMapSearch)
-                Positioned(
-                  top: MediaQuery.paddingOf(context).top + 16,
-                  left: 16,
-                  right: 16,
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.error_outline),
-                          const SizedBox(width: 12),
-                          const Expanded(
-                            child: Text('Не вдалося завантажити місця'),
-                          ),
-                          TextButton(
-                            onPressed: _loadVisiblePlaces,
-                            child: const Text('Спробувати ще раз'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              if (state.status == ExploreStatus.empty && !_hasPendingMapSearch)
-                const Center(
-                  child: Card(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 14,
-                      ),
-                      child: Text(
-                        'У цій області нічого не знайдено',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-              if (_hasPendingMapSearch)
-                Positioned(
-                  bottom: MediaQuery.paddingOf(context).top + 16,
-                  left: 16,
-                  right: 16,
-                  child: Center(
-                    child: FilledButton.icon(
-                      onPressed: isLoading ? null : _searchVisibleArea,
-                      icon: isLoading
-                          ? const SizedBox.square(
-                              dimension: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.search),
-                      label: const Text('Шукати в цій області'),
-                    ),
-                  ),
-                ),
+              ExploreMapOverlay(
+                status: state.status,
+                hasPlaces: state.places.isNotEmpty,
+                hasPendingMapSearch: _hasPendingMapSearch,
+                onSearchArea: _searchVisibleArea,
+                onRetry: _loadVisiblePlaces,
+              ),
             ],
           );
         },
