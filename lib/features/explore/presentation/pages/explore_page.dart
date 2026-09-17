@@ -64,6 +64,9 @@ class _ExplorePageState extends State<ExplorePage> {
                   initialZoom: 13,
                   onMapReady: _loadVisiblePlaces,
                   onPositionChanged: _onPositionChanged,
+                  interactionOptions: const InteractionOptions(
+                    flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                  ),
                 ),
                 children: [
                   TileLayer(
