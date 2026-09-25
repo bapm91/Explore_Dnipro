@@ -106,3 +106,5 @@ app.*.map.json
 *.mobileprovision
 *.p12
 *.cer
+# Widget Preview related
+.widget_preview/

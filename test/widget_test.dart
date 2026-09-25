@@ -1,14 +1,26 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:explore_dnipro/features/explore/presentation/widgets/place_details_sheet.dart';
+import 'package:explore_dnipro/modules/places/domain/entities/place.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('shows place details', (tester) async {
+    const place = Place(
+      id: 'museum-1',
+      name: 'Історичний музей',
+      latitude: 48.46,
+      longitude: 35.05,
+      categories: ['entertainment.museum'],
+      address: 'Дніпро',
+    );
 
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: PlaceDetailsSheet(place: place)),
+      ),
+    );
+
+    expect(find.text('Історичний музей'), findsOneWidget);
+    expect(find.text('Дніпро'), findsOneWidget);
   });
 }

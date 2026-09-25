@@ -15,6 +15,28 @@ void main() {
     SharedPreferencesAsyncPlatform.instance = null;
   });
 
+  test('skips invalid JSON', () async {
+    final preferences = SharedPreferencesAsync();
+    await preferences.setStringList('favorite_places_v1', ['{broken json']);
+
+    final repository = SharedPreferencesFavoritesRepository(
+      preferences: preferences,
+    );
+
+    final favorites = await repository.loadFavorites();
+
+    expect(favorites, isEmpty);
+  });
+
+  test('loads no favorites', () async {
+    final repository = SharedPreferencesFavoritesRepository(
+      preferences: SharedPreferencesAsync(),
+    );
+    final loaded = await repository.loadFavorites();
+
+    expect(loaded, const <Place>[]);
+  });
+
   test('loads a saved favorite', () async {
     final repository = SharedPreferencesFavoritesRepository(
       preferences: SharedPreferencesAsync(),
