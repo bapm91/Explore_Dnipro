@@ -10,6 +10,8 @@ class FavoritesCubit extends Cubit<List<Place>> {
   late final Future<void> _initialLoad;
   final FavoritesRepository _repository;
 
+  bool _isSaving = false;
+
   Future<void> loadFavorites() async {
     final favorites = await _repository.loadFavorites();
 
@@ -18,14 +20,20 @@ class FavoritesCubit extends Cubit<List<Place>> {
 
   Future<void> toggleFavorite(Place place) async {
     await _initialLoad;
+    if (_isSaving) return;
+    
+    _isSaving = true;
+    try {
+      final alreadyFavorite = isFavorite(place.id);
+      final updated = alreadyFavorite
+          ? state.where((item) => item.id != place.id).toList()
+          : [...state, place];
 
-    final alreadyFavorite = isFavorite(place.id);
-    final updated = alreadyFavorite
-        ? state.where((item) => item.id != place.id).toList()
-        : [...state, place];
-
-    await _repository.saveFavorites(updated);
-    emit(updated);
+      await _repository.saveFavorites(updated);
+      emit(updated);
+    } finally {
+      _isSaving = false;
+    }
   }
 
   bool isFavorite(String id) => state.any((place) => place.id == id);
