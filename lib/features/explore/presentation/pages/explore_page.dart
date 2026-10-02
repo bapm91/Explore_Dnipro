@@ -1,6 +1,7 @@
 import 'package:explore_dnipro/features/explore/presentation/widgets/explore_map_overlay.dart';
 import 'package:explore_dnipro/features/explore/presentation/widgets/place_category_selector.dart';
 import 'package:explore_dnipro/features/explore/presentation/widgets/place_details_sheet.dart';
+import 'package:explore_dnipro/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:explore_dnipro/modules/places/domain/entities/place.dart';
 import 'package:explore_dnipro/modules/places/domain/entities/place_category.dart';
 import 'package:flutter/material.dart';
@@ -83,6 +84,12 @@ class _ExplorePageState extends State<ExplorePage> {
     );
   }
 
+  void _openFavorites() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const FavoritesPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,6 +142,7 @@ class _ExplorePageState extends State<ExplorePage> {
                   selectedCategory: state.selectedCategory,
                   enabled: state.status != ExploreStatus.loading,
                   onSelected: _selectCategory,
+                  onFavoritesTap: _openFavorites,
                 ),
               ),
               ExploreMapOverlay(

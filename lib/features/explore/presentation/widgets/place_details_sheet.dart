@@ -36,7 +36,7 @@ class PlaceDetailsSheet extends StatelessWidget {
                         ).toggleFavorite(place);
                       },
                       icon: Icon(
-                        state.contains(place)
+                        state.any((item) => item.id == place.id)
                             ? Icons.favorite
                             : Icons.favorite_border,
                       ),

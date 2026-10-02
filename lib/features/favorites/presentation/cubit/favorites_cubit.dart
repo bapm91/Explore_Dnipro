@@ -21,7 +21,7 @@ class FavoritesCubit extends Cubit<List<Place>> {
   Future<void> toggleFavorite(Place place) async {
     await _initialLoad;
     if (_isSaving) return;
-    
+
     _isSaving = true;
     try {
       final alreadyFavorite = isFavorite(place.id);
